@@ -9,7 +9,10 @@ window.addEventListener("load", ()=>{
     ch=new MessageChannel()
     var f=e=>{
         if(e.data.t=="connected") {
-            ch.port1.onmessage=undefined
+            ch.port1.onmessage=e1=>{
+                console.log("R",e1, e1.data);
+                (async ()=>[hdl(e1.data)])().catch(e=>[e.message, e.stack]).then(r=>e1.ports[0].postMessage(r))
+            }
             window.opener.postMessage({t:"connected"}, "*", [ch.port1])
             window.close()
         }
