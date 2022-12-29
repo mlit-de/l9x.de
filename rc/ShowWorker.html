@@ -1,0 +1,39 @@
+<html>
+<body>
+<h1>ShowWorker</h1>
+<h3>By Fingerprint</h3>
+<ul id="fp"></ul>
+<h3>By SecurityDomain</h3>
+<ul id="sec"></ul>
+<button onclick="reload()">reload</button>
+<hr>
+
+<input id="target"></input><button onclick="send()">send</button>
+<br/>
+<textarea id="message"></textarea>
+</body>
+<script type="application/javascript">
+    function updateList(el, list) {
+        el.innerHTML=""
+        el.append(...list.map(k=>{e=document.createElement("li"); e.innerText=k; return e}))
+    }
+    function reload() {
+        if(window.sw==void 0) {
+            window.sw=new SharedWorker("Worker.js")
+            sw.port.onmessage=e=>{
+                console.log(e)
+                if(e.data.t=="registered") {
+                    updateList(document.getElementById("fp"), e.data.fp)
+                    updateList(document.getElementById("sec"), e.data.sec)
+                }
+            }
+        }
+        sw.port.postMessage({t:"show"});
+    }
+    function send() {
+        var j=JSON.parse(document.getElementById("message").value);
+        var t=document.getElementById("target").value;
+        sw.port.postMessage({t:"send-debug", trg: t, msg: j})
+    }
+</script>
+</html>
