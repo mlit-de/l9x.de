@@ -1,0 +1,21 @@
+<html>
+<body>
+<h1>C</h1>
+</body>
+<script type="application/javascript">
+window.addEventListener("load", ()=>{
+    window.sw=new SharedWorker("Worker.js")
+    var fp=document.location.hash.replace(/^#/,"");
+    ch=new MessageChannel()
+    var f=e=>{
+        if(e.data.t=="connected") {
+            ch.port1.onmessage=undefined
+            window.opener.postMessage({t:"connected"}, "*", [ch.port1])
+            window.close()
+        }
+    }
+    ch.port1.onmessage=f
+    sw.port.postMessage({t:"connect", fp: fp},[ch.port2])
+})
+</script>
+</html>

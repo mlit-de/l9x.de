@@ -1,0 +1,31 @@
+<html>
+<head>
+    <script src="lib.js"></script>
+</head>
+<body>
+<h1>S</h1>
+</body>
+<script type="application/javascript">
+window.addEventListener("load",()=>{
+    window.sw=new SharedWorker("Worker.js")
+    const nonce=l9x.u8toa(crypto.getRandomValues(new Uint8Array(8)))
+    var k = window.opener || window.parent
+    window.addEventListener("message",e => {
+        if(e.source==k) {
+            ({
+                id: async () => {
+                    var publicKey = await l9x.secImportPublicKey(e.data.pk)
+                    var fp = await l9x.hashKeyJks(e.data.pk)
+                    var ok = await l9x.secVerifySign(publicKey, nonce, e.data.sig)
+                    sw.port.postMessage({t:"register",fp:fp, sec:e.origin}, e.ports)
+                }
+            })[e.data.t]()
+        }
+    })
+
+    if(k!=void 0) {
+        k.postMessage({t:"identify",ch:nonce}, "*");
+    }
+})
+</script>
+</html>
