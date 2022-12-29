@@ -136,17 +136,16 @@
                             var pk = await crypto.subtle.exportKey("jwk", that.key.publicKey)
                             //console.log({t: "id", sig: sig, pk: pk})
                             var ch=new MessageChannel()
-                            // e.source.postMessage({t: "id", sig: sig, pk: pk}, "*",[ch.port2]);
-                            if(onAccepting) {
-                                onAccepting(ch.port1)
-                            }
                             ch.port1.onmessage=e=>{
                                 var p = e.ports[0]
                                 that.log("Accepting",e.data)
                                 p.postMessage({t:'connected'})
                                 p.onmessage=e=>onConnect(p,e)
                             }
-
+                            e.source.postMessage({t: "id", sig: sig, pk: pk}, "*",[ch.port2]);
+                            if(onAccepting) {
+                                onAccepting(ch.port1)
+                            }
                         }
                     })[e.data.t]()
                 }
