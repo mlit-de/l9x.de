@@ -1,0 +1,40 @@
+<html>
+<head>
+    <script type="application/javascript" src="https://unpkg.com/@zxing/browser@latest"></script>
+</head>
+<body>
+    <a id="bookmark">url2qr</a>
+    <input type="text" id="link">
+    <button id="refresh">refresh</button>
+    <br>
+    <div id="qr">
+
+    </div>
+    <script type="application/javascript">
+        window.addEventListener("load",main)
+function main() {
+    let u=new URL(document.location.href)
+    u.hash="#"
+    u=JSON.stringify(u)
+    document.getElementById("bookmark").href=`javascript:(()=>{open(${u}+document.location.href,"_blank")})()`
+    let d = document.location.hash.replace(/^#/,"")
+    document.getElementById("link").value=d
+    document.getElementById("refresh").addEventListener("click",update)
+    update()
+}
+
+function update() {
+   let d=document.getElementById("link").value
+   const codeWriter = new ZXingBrowser.BrowserQRCodeSvgWriter();
+   var hints = new Map();
+   hints.set("MARGIN","0");
+   hints.set("ERROR_CORRECTION","M");
+   const svgElement = codeWriter.write(d, 400, 400,hints);
+   svgElement.setAttribute("class","qr");
+   let q=document.getElementById("qr")
+   q.innerHTML=""
+   q.appendChild(svgElement)
+}
+    </script>
+</body>
+</html>
