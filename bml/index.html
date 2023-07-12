@@ -29,7 +29,14 @@ let d=document; s=d.createElement("script"); s.src={{=it.q_url}}; s.onload=()=>d
     <label label-for="id-4">Name: </label><input class="param" id="id-4" name="name" value="!copy-href">
     <br>
     <textarea class="template">
-let d=document; let f=(e)=>{d.body.removeEventListener("click",f,true); e.preventDefault(); console.log(e.target.closest("a").href)}; d.body.addEventListener("click",f,true);
+let d=document;
+let f=(e)=>{d.body.removeEventListener("click",f,true);
+   e.preventDefault();
+   let t=e.target.closest("a").href;
+   navigator.clipboard.writeText(t);
+   alert("Copied to clipboard: " + t);
+}; d.body.addEventListener("click",f,true);
+
 </textarea>
 </div>
 
