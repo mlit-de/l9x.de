@@ -11,15 +11,22 @@
 
     </div>
     <script type="application/javascript">
+
         window.addEventListener("load",main)
 function main() {
+    let sec=Math.floor(Math.random()*(10**12))
+    window.addEventListener("message",m=>{
+        if(m.data.sec===sec && m.data.url) {
+            document.getElementById("link").value=m.data.url
+            update()
+        }
+    })
     let u=new URL(document.location.href)
     u.hash="#"
     u=JSON.stringify(u)
-    document.getElementById("bookmark").href=`javascript:(()=>{open(${u}+document.location.href,"_blank")})()`
-    let d = document.location.hash.replace(/^#/,"")
-    document.getElementById("link").value=d
+    document.getElementById("bookmark").href=`javascript:(()=>{var w; let f=(m)=>{if(m.source==w){w.postMessage({sec:m.data.sec,url:document.location.href},"*"); window.removeEventListener("message",f)}; }; window.addEventListener("message",f); w=open(${u},"_blank")})()`
     document.getElementById("refresh").addEventListener("click",update)
+    window.opener.postMessage({sec},"*")
     update()
 }
 
