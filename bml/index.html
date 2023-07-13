@@ -40,6 +40,17 @@ let f=(e)=>{d.body.removeEventListener("click",f,true);
 </textarea>
 </div>
 
+<div class="bm">
+<h4>Copy-To-Clipboard</h4>
+<a class="bm" href="">#</a>
+<label label-for="id-8">Name: </label><input class="param" id="id-8" name="name" value="!copyToClipboard">
+<label label-for="id-9">Var-Name: </label><input class="param" id="id-9"  name="varname" value="copyToClipboard">
+<br>
+<textarea class="template">
+navigator.clipboard.writeText({{=it.varname}}});
+</textarea>
+</div>
+
 
 
 
