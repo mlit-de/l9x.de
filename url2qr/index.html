@@ -22,7 +22,7 @@ function main() {
         }
     })
     let u=new URL(document.location.href)
-    u.hash="#"
+    u.hash=""
     u=JSON.stringify(u)
     document.getElementById("bookmark").href=`javascript:(()=>{var w; let f=(m)=>{if(m.source==w){w.postMessage({sec:m.data.sec,url:document.location.href},"*"); window.removeEventListener("message",f)}; }; window.addEventListener("message",f); w=open(${u},"_blank")})()`
     document.getElementById("refresh").addEventListener("click",update)
