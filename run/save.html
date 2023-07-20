@@ -1,0 +1,92 @@
+<html>
+<body>
+<input id="name"><button id="load">load</button><button id="save">save</button>
+<br>
+<textarea id="content" width="100%"></textarea>
+<script type="application/javascript">
+
+
+function updateDatabase(ev) {
+    console.log('Upgrade DB');
+    const db = ev.target.result;
+    if(db.objectStoreNames.contains('File')) {
+        db.deleteObjectStore('File')
+    }
+    const store = db.createObjectStore('File', {keyPath: 'name', autoIncrement: true});
+}
+updateDatabase.version = 2
+
+function writeTheDb(name, content) {
+
+    return new Promise((res,rej)=> {
+        const dbconnect = window.indexedDB.open('FilesDb', updateDatabase.version);
+        dbconnect.onupgradeneeded = updateDatabase
+        dbconnect.onerror = ev => {
+            rej("Cant connect" +  ev.target.error.message)
+        }
+        dbconnect.onsuccess = ev => {
+            console.log('DB open');
+            const db = ev.target.result;
+            const transaction = db.transaction('File', 'readwrite');
+            const store = transaction.objectStore('File');
+            store.put({name, content});
+            transaction.onerror = ev => {
+                rej('An error has occured!' +  ev.target.error.message);
+            };
+            transaction.oncomplete = ev => {
+                res('Data has been added successfully!');
+
+            }
+        }
+    });
+}
+
+function readTheDb(name) {
+    return new Promise((res,rej)=> {
+        const dbconnect = window.indexedDB.open('FilesDb', updateDatabase.version);
+        dbconnect.onupgradeneeded = updateDatabase
+        dbconnect.onerror = ev => {
+            rej("Cant connect" +  ev.target.error.message)
+        }
+        dbconnect.onsuccess = ev => {
+            console.log('DB open');
+            const db = ev.target.result;
+            const transaction = db.transaction('File', 'readonly');
+            const store = transaction.objectStore('File');
+            let query = store.get(name)
+            query.onerror = ev => {
+                rej('Request failed!' + ev.target.error.message);
+            };
+            query.onsuccess = ev => {
+                res(ev.target.result);
+            };
+        }
+    });
+}
+
+
+
+
+window.addEventListener("load", () => {
+
+
+    document.getElementById("load").addEventListener("click", ()=>{
+        readTheDb(document.getElementById("name").value).then(r=>{
+            document.getElementById("content").value=r.content
+        });
+    })
+
+    document.getElementById("save").addEventListener("click", ()=>{
+        let r = document.getElementById("content").value
+        let key = document.getElementById("name").value
+        writeTheDb(key, r).then(k=>alert(k))
+    })
+
+})
+
+
+
+
+</script>
+</body>
+</html>

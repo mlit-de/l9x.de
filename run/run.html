@@ -1,0 +1,51 @@
+<html>
+<body>
+<script>
+window.addEventListener("load", ()=>{
+    let key=document.location.hash.replace(/^#/,"")
+
+    function updateDatabase(ev) {
+        console.log('Upgrade DB');
+        const db = ev.target.result;
+        if(db.objectStoreNames.contains('File')) {
+            db.deleteObjectStore('File')
+        }
+        const store = db.createObjectStore('File', {keyPath: 'name', autoIncrement: true});
+    }
+    updateDatabase.version = 2
+
+
+    function readTheDb(name) {
+        return new Promise((res,rej)=> {
+            const dbconnect = window.indexedDB.open('FilesDb', updateDatabase.version);
+            dbconnect.onupgradeneeded = updateDatabase
+            dbconnect.onerror = ev => {
+                rej("Cant connect" +  ev.target.error.message)
+            }
+            dbconnect.onsuccess = ev => {
+                console.log('DB open');
+                const db = ev.target.result;
+                const transaction = db.transaction('File', 'readonly');
+                const store = transaction.objectStore('File');
+                let query = store.get(name)
+                query.onerror = ev => {
+                    rej('Request failed!' + ev.target.error.message);
+                };
+                query.onsuccess = ev => {
+                    res(ev.target.result);
+                };
+            }
+        });
+    }
+
+    readTheDb(key).then(v=> {
+        let u = URL.createObjectURL(new Blob([v.content], {type: "application/javascript"}))
+        let s = document.createElement("script")
+        s.src=u;
+        document.head.appendChild(s)
+    })
+})
+
+</script>
+</body>
+</html>
