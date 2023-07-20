@@ -53,6 +53,52 @@ navigator.clipboard.writeText({{=it.varname}});
 
 
 
+<div class="bm">
+    <h4>PickSelector</h4>
+    <a class="bm" href="">#</a>
+    <label label-for="id-12">Name: </label><input class="param" id="id-12" name="name" value="!pickSelector">
+    <label label-for="id-13">Color: </label><input class="param" id="id-13"  name="color" value="red">
+    <br>
+    <textarea class="template">
+let d=document;
+let f=(e)=>{d.body.removeEventListener("click",f,true);
+   e.preventDefault();
+   let t=e.target;
+   let nn=[];
+   while(t) {
+      nn.unshift(t); t=t.parentElement
+   }
+   let r = nn.map(n=>[[[n.tagName,n.id].filter(x=>x).join("#"),...n.classList].join(".")]).join(" ");
+   console.log(r);
+   let s=window.prompt("selector",r);
+   if(s!=null) {
+      navigator.clipboard.writeText(s);
+      L=[...document.querySelectorAll(s)];
+      let S=L.map(n => { let y=n.style.border; n.style.setProperty("border","5px dotted "+{{=it.q_color}}); return y });
+      setTimeout(()=>L.forEach((n,i)=>n.style.setProperty("border",S[i])),5000);
+   }
+}; d.body.addEventListener("click",f,true);
+
+
+
+</textarea>
+</div>
+
+
+
+<div class="bm">
+    <h4>CopySelector</h4>
+    <a class="bm" href="">#</a>
+    <label label-for="id-16">Name: </label><input class="param" id="id-16" name="name" value="!copySelection">
+    <label label-for="id-17">Selector: </label><input class="param" id="id-17"  name="selector" value="a">
+    <label label-for="id-18">Funktion: </label><input class="param" id="id-18"  name="it" value="it">
+    <br>
+    <textarea class="template">
+        let l=[...document.querySelectorAll({{=it.q_selector}})].map(it=>{{=it.it}});
+        let L=JSON.stringify(l); navigator.clipboard.writeText(L);
+    </textarea>
+</div>
+
 
 
 
