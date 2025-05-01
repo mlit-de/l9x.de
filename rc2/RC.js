@@ -56,7 +56,8 @@ genLink=(hdl,tkn='prompt("rc-token")')=>'javascript:(e=>{var t,a=window,o="messa
 class RC {
 
     static get BASE_URL() {
-        return document.location.origin+"/rc/"
+        //return document.location.origin+"/rc/"
+        return "https://l9x.de/rc2/"
     }
 
     constructor({vm,pub,priv,fp}={}) {
